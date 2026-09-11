@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='/img/fav.png') }}" type="image/x-icon">
+    <script defer src="{{ url_for('static', filename='/js/generador.js') }}"></script>
+    
+    <title>Recibos generados</title>
+    <style>
+    body {
+        background-color: #f0f0f0;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .card {
+        max-width: 820px;
+        margin: 24px auto;
+        padding: 24px 28px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+        font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+        color: #1f2937;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #f3f4f6;
+        letter-spacing: 0.3px;
+    }
+
+    .card-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .card-row:last-child {
+        border-bottom: none;
+    }
+
+    .card-row .label {
+        font-size: 0.92rem;
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .card-row .value {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #111827;
+        background: #f9fafb;
+        padding: 4px 10px;
+        border-radius: 6px;
+        min-width: 40px;
+        text-align: right;
+    }
+
+    /* Card de recibos: mismas filas, pero con numerador + link en vez de label/value */
+    .card.recibos {
+        max-height: 480px;
+        overflow-y: auto;
+    }
+
+    .card-row.recibo {
+        gap: 12px;
+    }
+
+    .card-row.recibo .index {
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f9fafb;
+        color: #6b7280;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 6px;
+    }
+
+    .card-row.recibo a {
+        font-size: 0.92rem;
+        font-weight: 500;
+        color: #1f2937;
+        text-decoration: none;
+        padding: 4px 8px;
+        border-radius: 6px;
+        transition: background 0.15s ease, color 0.15s ease;
+        flex-grow: 1;
+    }
+
+    .card-row.recibo a:hover {
+        background: #eef2ff;
+        color: #4338ca;
+    }
+
+    .convertir {
+        margin: 5rem;
+        text-align: center;
+        font-size: large;
+    }
+
+    .convertir a {
+        background-color: black;
+        color: white;
+        border-radius: 5px;
+        text-decoration: auto;
+        padding: 2rem 8rem 2rem 8rem;
+        font-size: large;
+    }
+</style>
+</head>
+
+<body>
+    {% if stats %}
+
+    <div class="convertir">
+        <a href="/convert">Convertir a pdf</a>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Estadísticas</div>
+
+        <div class="card-row">
+            <span class="label">Recibos procesados:</span>
+            <span class="value">{{ stats.recibos }}</span>
+        </div>
+        <div class="card-row">
+            <span class="label">Recibos con error:</span>
+            <span class="value">{{ stats.recibos_con_error }}</span>
+        </div>
+        <div class="card-row">
+            <span class="label">Carga de excel:</span>
+            <span class="value">{{ stats.carga_de_excel }} seg</span>
+        </div>
+        <div class="card-row">
+            <span class="label">Procesamiento de excel:</span>
+            <span class="value">{{ stats.procesamiento_de_excel }} seg</span>
+        </div>
+        <div class="card-row">
+            <span class="label">Procesamiento de recibo:</span>
+            <span class="value">{{ stats.procesamiento_de_recibo_promedio }} seg</span>
+        </div>
+        <div class="card-row">
+            <span class="label">Procesamiento total:</span>
+            <span class="value">{{ stats.procesamiento_total }} seg</span>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if nombres_recibos %}
+    <div class="card recibos">
+        <div class="card-title">
+            Recibos generados
+            <div>
+                <small>Puede revisar recibos individuales antes de generar el pdf</small>
+            </div>
+        </div>
+        {% for n in nombres_recibos %}
+        <div class="card-row recibo">
+            <span class="index">{{ loop.index }}</span>
+            <a href="{{ n.ruta }}">{{ n.legajo }} - {{ n.nombre }}  - {{ n.cuil }}</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div id="loadingOverlay">
+        <div class="loadingMessage">
+            <div class="spinner"></div>
+            <span>Procesando, por favor esperá...</span>
+        </div>
+    </div>
+
+</body>
+
+</html>

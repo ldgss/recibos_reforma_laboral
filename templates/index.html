@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cargue el archivo de sueldos</title>
+    <link rel="stylesheet" href=" {{ url_for('static', filename='/css/index.css') }}">
+    <script defer src="{{ url_for('static', filename='/js/index.js') }}"></script>
+</head>
+<body>
+    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+        <div id="dropzone">
+            <span id="mensaje_sin_archivo">Arrastrá el Excel acá<br>o hacé click para seleccionar</span>
+            <span style="display: none;" id="mensaje_con_archivo">Archivo a subir</span>
+            <span id="nombreArchivo"></span>
+        </div>
+        <input type="file" id="fileInput" name="archivo" accept=".xlsx,.xls">
+        <button id="submit_button" type="submit" class="submit"">Enviar</button>
+    </form>
+    <div id="loadingOverlay">
+        <div class="loadingMessage">
+            <div class="spinner"></div>
+            <span>Procesando, por favor esperá...</span>
+        </div>
+    </div>
+</body>
+</html>

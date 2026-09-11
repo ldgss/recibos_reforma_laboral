@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href=" {{ url_for('static', filename='/css/recibos.css') }}">
+    <script defer src="{{ url_for('static', filename='/js/recibos.js') }}"></script>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='/img/fav.png') }}" type="image/x-icon">
+    <title>Recibos</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 3mm;
+        }
+
+        *{
+            font-size: xx-small;
+        }
+
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: small;
+        }
+
+        .container{
+            display: flex;
+            margin: 1rem;
+        }
+
+        .original{
+            width: 50vw;
+        }
+
+        .duplicado{
+            width: 50vw;
+        }
+
+        .empresa{
+            border: 1px solid black;
+            display: flex;
+            margin: 1rem;
+        }
+
+        #logo{
+            max-width: 80%;
+            margin: 1rem;
+        }
+
+        .logo{
+            width: 30%;
+        }
+
+        .col-2, .col-3{
+            width: 35%;
+        }
+
+        .col-2 > div, .col-3 > div{
+            margin: 1rem;
+        }
+
+
+        .empleado{
+            margin: 1rem;
+            text-align: center;
+        }
+
+        .empleado  * {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        .empleado > table {
+            width: 100%;
+        }
+
+        .empleado > table tr:nth-child(odd){
+            background-color: gainsboro;
+        }
+
+        .table_recibo{
+            margin: 1rem;
+        }
+
+        .table_recibo > table{
+            width: 100%;
+            border-collapse: collapse;
+            border-right: 1px solid black;
+            border-bottom: 1px solid black;
+        }
+
+        .table_recibo table td{
+            border-left: 1px solid black;
+        }
+
+        .table_recibo_header{
+            column-span: all;
+            background-color: #095d9b;
+            color: white;
+            font-weight: bold;
+        }
+
+        .monto{
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .cantidad, .titulo_center{
+            text-align: center;
+        }
+
+        .table_recibo_first{
+            background-color: gainsboro;
+        }
+
+        .table_subtotal{
+            background-color: rgb(244, 243, 243);
+            border-top: 1px solid black;
+            font-weight: bold;
+        }
+
+        .table_neto{
+            background-color: rgb(211, 211, 211);
+            border-top: 1px solid black;
+            font-weight: bold;
+        }
+
+        .page-break{
+            page-break-before: always;
+            break-before: page;
+        }
+
+        .table_continua{
+            background-color: rgb(244, 243, 243);
+            font-style: italic;
+            text-align: center;
+        }
+
+        .footer{
+            margin: 1rem;
+            display: flex;
+        }
+
+        .composicion{
+            width: 70%;
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        .footer_header{
+            background-color: #095d9b;
+            color: white;
+            font-weight: bold;
+        }
+
+        .composiciones{
+            display: flex;
+        }
+
+        .composicion_izquierda div, .composicion_derecha div {
+            padding: 2px;
+        }
+
+        .composicion .composicion_izquierda > div, .composicion .composicion_derecha > div {
+            display: grid;
+            grid-template-columns: 1.5fr auto 1fr; /* label | $ | monto */
+            align-items: baseline;
+        }
+
+        .composicion .composicion_izquierda > div span:nth-child(1), .composicion .composicion_derecha > div span:nth-child(1){
+            text-align: left;
+        }
+
+        .composicion .composicion_izquierda > div span:nth-child(2), .composicion .composicion_derecha > div span:nth-child(2){
+            text-align: center;
+        }
+
+        .composicion .composicion_izquierda > div span:nth-child(3), .composicion .composicion_derecha > div span:nth-child(3){
+            text-align: right;
+        }
+
+
+        .composicion_izquierda{
+            border-right: 1px solid black;
+        }
+
+        .composicion_izquierda, .composicion_derecha{
+            width: 100%;
+        }
+
+        .composicion_izquierda div, .composicion_derecha div {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .composicion_total_titulo{
+            background-color: gainsboro;
+            border-top: 1px solid black;
+        }
+
+        .distribucion {
+            width: 30%;
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+            border-collapse: collapse;
+            border-right: 1px solid black;
+        }
+
+        .firma{
+            margin-top: 50px;
+            margin-left: 1rem;
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+        }
+
+        .firma > div{
+            width: 50%;
+            text-align: center;
+        }
+
+        .firma > div:nth-child(2){
+            border-top: 1px solid black;
+        }
+
+        .monto_en_letras{
+            margin-top: 1rem;
+        }
+
+        .distribucion_grafico{
+            max-width: 100%;
+        }
+
+        
+    </style>
+</head>
+<body>
+    {% for recibo in recibos %}
+        {% macro recibo_macro(empleado, tipo, pagina) %}
+        {% set chunk = pagina.chunk %}
+        {% set es_primera = pagina.es_primera %}
+        {% set es_ultima_sueldo = pagina.es_ultima_sueldo %}
+        {% set mostrar_footer = pagina.mostrar_footer %}
+        {% set solo_composicion = pagina.solo_composicion %}
+            <div class="{{ tipo }}">
+                <div class="empresa">
+                    <div class="logo">
+                        <img id="logo" src="data:image/png;base64,{{ recibo.empresa.logo }}" alt="Logo Solvencia">
+                    </div>
+                    <div class="col-2">
+                        <div>
+                            Empresa: {{ recibo.empresa.nombre }}
+                        </div>
+                        <div>
+                            CUIT: {{ recibo.empresa.cuit }}
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div>
+                            Localidad: {{ recibo.empresa.localidad }}
+                        </div>
+                        <div>
+                            Domicilio: {{ recibo.empresa.domicilio }}
+                        </div>
+                    </div>
+                </div>
+                <div class="empleado">
+                    <table>
+                        <tr>
+                            <td>Legajo</td>
+                            <td>Apellido y nombre</td>
+                            <td>CUIL</td>
+                            <td>DNI</td>
+                            <td>Obra Social</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{ recibo.empleado.legajo }}
+                            </td>
+                            <td>
+                                {{ recibo.empleado.nombre }}
+                            </td>
+                            <td>
+                                {{ recibo.empleado.cuil }}
+                            </td>
+                            <td>
+                                {{ recibo.empleado.dni }}
+                            </td>
+                            <td>
+                                {{ recibo.empleado.obra_social}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Ingreso</td>
+                            <td>Categoría</td>
+                            <td>Ing. Recon.</td>
+                            <td>Egreso</td>
+                            <td>Tipo Liquidación</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{ recibo.empleado.ingreso }}
+                            </td>
+                            <td>
+                                {{ recibo.empleado.categoria }}
+                            </td>
+                            <td>
+                                {{ recibo.empleado.ingreso_reconocido }}
+                            </td>
+                            <td>
+                                {{ recibo.empleado.egreso }}
+                            </td>
+                            <td>
+                                {{ recibo.empleado.tipo_liquidacion }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CCT</td>
+                            <td>
+                                {% if recibo.empleado.tipo_liquidacion == 'Mensual'%}
+                                    Sueldo Bruto Categoría
+                                {% else %}
+                                    Valor Bruto Categoría
+                                {% endif%}
+                            </td>
+                            <td>Período</td>
+                            <td>Pago</td>
+                            <td>F. Pago Aportes</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{ recibo.empleado.convenio }}
+                            </td>
+                            <td>
+                                {% if recibo.empleado.tipo_liquidacion == 'Mensual'%}
+                                    {{ recibo.empleado.sueldo_bruto_categoria | pesos }}
+                                {% else %}
+                                    {{ recibo.empleado.valor_bruto_categoria | pesos }}
+                                {% endif%}
+                            </td>
+                            <td>
+                                {{ recibo.empleado.periodo }}
+                            </td>
+                            <td>
+                                {{ recibo.empleado.pago }}
+                            </td>
+                            <td>
+                                {{ recibo.empleado.fecha_pago_aportes }}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                {% if es_primera %}
+                <div class="table_recibo">
+                    <table>
+                        <tr class="table_recibo_header">
+                            <td colspan="3">
+                                COSTO TOTAL DEL EMPLEADOR
+                            </td>
+                            <td class="monto">
+                                <span>$</span>
+                                <span>
+                                    {{ recibo.costo_total_empleador | pesos }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr class="table_recibo_first">
+                            <td>Contribuciones y conceptos a cargo del empleador</td>
+                            <td class="titulo_center">Unidad</td>
+                            <td class="titulo_center">Base</td>
+                            <td class="titulo_center">Monto</td>
+                        </tr>
+                        {% for concepto in recibo.costo.conceptos %}
+                        <tr>
+                            <td>
+                                {{ concepto.denominacion }}
+                            </td>
+                            <td>
+                                
+                            </td>
+                            <td>
+                                
+                            </td>
+                            <td class="monto">
+                                <span>$</span>
+                                <span>{{ concepto.monto | pesos}}</span>
+                            </td>
+                        </tr>
+                        {% endfor%}
+                        <tr class="table_subtotal">
+                            <td>
+                                Subtotal contribuciones 
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td class="monto">
+                                <span>$</span>
+                                <span>{{ recibo.costo.subtotal_costo_empleador | pesos }}</span> 
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                {% endif %}
+                {% if not solo_composicion %}
+                <div class="table_recibo">
+                    <table>
+                        <tr class="table_recibo_header">
+                            <td colspan="4">
+                                SUELDO BRUTO EMPLEADO{% if not es_primera %} (continuación){% endif %}
+                            </td>
+                            <td class="monto">
+                                {% if es_primera %}
+                                <span>$</span>
+                                <span>
+                                    {{ recibo.sueldo.bruto | pesos }}
+                                </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr class="table_recibo_first">
+                            <td>Conceptos</td>
+                            <td class="titulo_center">Unidad</td>
+                            <td class="titulo_center">Remunerativo</td>
+                            <td class="titulo_center">No remunerativo</td>
+                            <td class="titulo_center">Retenciones</td>
+                        </tr>
+                        {% for concepto in chunk %}
+                        <tr>
+                            <td>
+                                {{ concepto.denominacion }}
+                            </td>
+                            <td class="cantidad">
+                                {% if concepto.cantidad %}
+                                    {{ concepto.cantidad }}
+                                {% endif %}
+                            </td>
+                            <td> 
+                                {% if concepto.tipo_concepto|lower|trim == recibo.sueldo.CODIGOS_SUELDO_BRUTO[0] %}
+                                    <div class="monto">
+                                        <span>$</span>
+                                        <span>
+                                            {{ concepto.monto | pesos}}
+                                        </span>
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td> 
+                                {% if concepto.tipo_concepto|lower|trim == recibo.sueldo.CODIGOS_SUELDO_BRUTO[1] %}
+                                    <div class="monto">
+                                        <span>$</span>
+                                        <span>
+                                            {{ concepto.monto | pesos}}
+                                        </span>
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td> 
+                                {% if concepto.tipo_concepto|lower|trim == recibo.sueldo.CODIGOS_SUELDO_BRUTO[2] %}
+                                    <div class="monto">
+                                        <span>$</span>
+                                        <span>
+                                            {{ concepto.monto | pesos}}
+                                        </span>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <!-- desde aca -->
+                        {% endfor %}
+                        {% if es_ultima_sueldo %}
+                        <tr class="table_subtotal">
+                            <td>
+                                Subtotal
+                            </td>
+                            <td></td>
+                            <td>
+                                <div class="monto">
+                                    <span>$</span>
+                                    <span>{{ recibo.sueldo.remunerativo | pesos }}</span> 
+                                </div>
+                            </td>
+                            <td>
+                                <div class="monto">
+                                    <span>$</span>
+                                    <span>{{ recibo.sueldo.no_remunerativo | pesos }}</span> 
+                                </div>
+                            </td>
+                            <td>
+                                <div class="monto">
+                                    <span>$</span>
+                                    <span>{{ recibo.sueldo.retenciones | pesos }}</span> 
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="table_neto">
+                            <td colspan="4">
+                                Neto a cobrar
+                            </td>
+                            <td class="monto">
+                                <span>$</span>
+                                <span>
+                                    {{ recibo.sueldo.neto | pesos }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr class="table_continua">
+                            <td colspan="5">Continúa en la página siguiente...</td>
+                        </tr>
+                        {% endif %}
+                    </table>
+                    {% if es_ultima_sueldo %}
+                    <div class="monto_en_letras">
+                        {{ recibo.monto_en_letras }}
+                    </div>
+                    {% endif %}
+                    <!-- hasta aca -->
+                </div>
+                {% endif %}
+                {% if mostrar_footer %}
+                <div class="footer">
+                    <div class="composicion">
+                        <div class="footer_header">COMPOSICIÓN SALARIAL</div>
+                        <div class="composiciones">
+                            <div class="composicion_izquierda">
+                                <div class="composicion_total_titulo">
+                                    <span>Total Cto Sindical</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.composicion_total_sindical | pesos }} </span>
+                                </div>
+                                <div>
+                                    <span>Empleador</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.costo.composicion.composicion_sindical_empleador | pesos}} </span>
+                                </div>
+                                <div>
+                                    <span>Trabajador</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.sueldo.composicion.composicion_sindical_trabajador | pesos }} </span>
+                                </div>
+                                <div class="composicion_total_titulo">
+                                    <span>Total Cto Seg. Social</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.composicion_total_seg_social | pesos }} </span>
+                                </div>
+                                <div>
+                                    <span>Empleador</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.costo.composicion.composicion_seg_social_empleador | pesos }} </span>
+                                </div>
+                                <div>
+                                    <span>Trabajador</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.sueldo.composicion.composicion_seg_social_trabajador | pesos }} </span>
+                                </div>
+                                <div class="composicion_total_titulo">
+                                    <span>Total Cto Obra Social</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.composicion_total_obra_social | pesos }} </span>
+                                </div>
+                                <div>
+                                    <span>Empleador</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.costo.composicion.composicion_obra_social_empleador | pesos }} </span>
+                                </div>
+                                <div>
+                                    <span>Trabajador</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.sueldo.composicion.composicion_obra_social_trabajador | pesos }} </span>
+                                </div>
+                            </div>
+                            <div class="composicion_derecha">
+                                <div class="composicion_total_titulo">
+                                    <span>Total Cto INSSJP</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.composicion_total_inssjp | pesos }} </span>
+                                </div>
+                                <div>
+                                    <span>Empleador</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.costo.composicion.composicion_inssjp_empleador | pesos }} </span>
+                                </div>
+                                <div>
+                                    <span>Trabajador</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.sueldo.composicion.composicion_inssjp_trabajador | pesos }} </span>
+                                </div>
+                                <div class="composicion_total_titulo">
+                                    <span>Total Cto ART</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.composicion_total_art | pesos }} </span>
+                                </div>
+                                <div>
+                                    <span>Empleador</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.costo.composicion.composicion_art_empleador | pesos }} </span>
+                                </div>
+                                <div>
+                                    <span>Trabajador</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.sueldo.composicion.composicion_art_trabajador | pesos }} </span>
+                                </div>
+                                <div class="composicion_total_titulo">
+                                    <span>Total Cto SCVO</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.composicion_total_scvo | pesos }} </span>
+                                </div>
+                                <div>
+                                    <span>Empleador</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.costo.composicion.composicion_scvo_empleador | pesos }} </span>
+                                </div>
+                                <div>
+                                    <span>Trabajador</span>
+                                    <span>$</span>
+                                    <span>{{ recibo.sueldo.composicion.composicion_scvo_trabajador | pesos }} </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="distribucion">
+                        <div class="footer_header">DISTRIBUCIÓN DE COSTOS</div>
+                        <img class="distribucion_grafico" src="data:image/png;base64,{{ recibo.distribucion }}" alt="Distribucion de costos">
+                    </div>
+                </div>
+                
+                <div class="firma">
+                    <div></div>
+                    <div>     
+                        {% if tipo == 'original' %}
+                            Firma Empleado
+                        {% else %}
+                            Firma Empleador
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% endif %}
+            </div>
+
+         {% endmacro %}
+
+        {% for pagina in recibo.paginas %}
+        <div class="container{% if not loop.first %} page-break{% endif %}">
+            {{ recibo_macro(empleado, "original", pagina) }}
+            {{ recibo_macro(empleado, "duplicado", pagina) }}
+        </div>
+        {% endfor %}
+    {% endfor %}
+</body>
+</html>

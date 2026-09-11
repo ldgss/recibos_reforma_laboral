@@ -1,0 +1,202 @@
+@page {
+        size: A4 landscape;
+        margin: 3mm;
+}
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: small;
+}
+
+.container{
+    display: flex;
+    margin: 1rem;
+}
+
+.original{
+    width: 50vw;
+}
+
+.duplicado{
+    width: 50vw;
+}
+
+.empresa{
+    border: 1px solid black;
+    display: flex;
+    margin: 1rem;
+}
+
+#logo{
+    max-width: 80%;
+    margin: 1rem;
+}
+
+.logo{
+    width: 30%;
+}
+
+.col-2, .col-3{
+    width: 35%;
+}
+
+.col-2 > div, .col-3 > div{
+    margin: 1rem;
+}
+
+
+.empleado{
+    margin: 1rem;
+    text-align: center;
+}
+
+.empleado  * {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.empleado > table {
+    width: 100%;
+}
+
+.empleado > table tr:nth-child(odd){
+    background-color: gainsboro;
+}
+
+.table_recibo{
+    margin: 1rem;
+}
+
+.table_recibo > table{
+    width: 100%;
+    border-collapse: collapse;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+.table_recibo table td{
+    border-left: 1px solid black;
+}
+
+.table_recibo_header{
+    column-span: all;
+    background-color: #095d9b;
+    color: white;
+    font-weight: bold;
+}
+
+.monto{
+    display: flex;
+    justify-content: space-between;
+}
+
+.cantidad, .titulo_center{
+    text-align: center;
+}
+
+.table_recibo_first{
+    background-color: gainsboro;
+}
+
+.table_subtotal{
+    background-color: rgb(244, 243, 243);
+    border-top: 1px solid black;
+    font-weight: bold;
+}
+
+.table_neto{
+    background-color: rgb(211, 211, 211);
+    border-top: 1px solid black;
+    font-weight: bold;
+}
+
+.footer{
+    margin: 1rem;
+    display: flex;
+}
+
+.composicion{
+    width: 70%;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.footer_header{
+    background-color: #095d9b;
+    color: white;
+    font-weight: bold;
+}
+
+.composiciones{
+    display: flex;
+}
+
+.composicion .composicion_izquierda > div, .composicion .composicion_derecha > div {
+    display: grid;
+    grid-template-columns: 1.5fr auto 1fr; /* label | $ | monto */
+    align-items: baseline;
+}
+
+.composicion .composicion_izquierda > div span:nth-child(1), .composicion .composicion_derecha > div span:nth-child(1){
+    text-align: left;
+}
+
+.composicion .composicion_izquierda > div span:nth-child(2), .composicion .composicion_derecha > div span:nth-child(2){
+    text-align: center;
+}
+
+.composicion .composicion_izquierda > div span:nth-child(3), .composicion .composicion_derecha > div span:nth-child(3){
+    text-align: right;
+}
+
+
+.composicion_izquierda{
+    border-right: 1px solid black;
+}
+
+.composicion_izquierda, .composicion_derecha{
+    width: 100%;
+}
+
+.composicion_izquierda div, .composicion_derecha div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.composicion_total_titulo{
+    background-color: gainsboro;
+    border-top: 1px solid black;
+}
+
+.distribucion {
+    width: 30%;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-collapse: collapse;
+    border-right: 1px solid black;
+}
+
+.firma{
+    margin-top: 50px;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+}
+
+.firma > div{
+    width: 50%;
+    text-align: center;
+}
+
+.firma > div:nth-child(2){
+    border-top: 1px solid black;
+}
+
+.monto_en_letras{
+    margin-top: 1rem;
+}
+
+.distribucion_grafico{
+    max-width: 100%;
+}
