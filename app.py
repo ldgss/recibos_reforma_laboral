@@ -10,6 +10,7 @@ from pathlib import Path
 import io
 import tracemalloc
 import subprocess
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 tracemalloc.start()
 
@@ -37,6 +38,7 @@ def pesos(valor):
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # tamaño maximo subida de archivo 50 MB
 app.jinja_env.filters['pesos'] = pesos
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_for=1, x_host=1, x_prefix=1)
 
 def memoria():
     current, peak = tracemalloc.get_traced_memory()
@@ -103,6 +105,15 @@ def paginar_sueldo(conceptos):
 def index():
     return render_template("index.html")
 
+@app.route('/debug-headers')
+def debug_headers():
+    return {
+        'X-Forwarded-Proto': request.headers.get('X-Forwarded-Proto'),
+        'X-Forwarded-Host': request.headers.get('X-Forwarded-Host'),
+        'request.scheme': request.scheme,
+        'request.url_root': request.url_root,
+    }
+
 
 @app.get("/upload")
 def upload_get():
@@ -132,7 +143,8 @@ def upload():
         raw = excel.load_data(archivo)
     except Exception:
         logging.error(f"Error leyendo el Excel subido ({archivo.filename}):\n{traceback.format_exc()}")
-        return "El archivo no pudo ser leído. Verificá que sea un Excel válido.", 400
+        message = "El archivo no pudo ser leído. Verificá que sea un Excel válido."
+        return render_template("error.html", message = message), 400
 
     t_excel = time.perf_counter()
     nombres_recibos = []
@@ -141,7 +153,12 @@ def upload():
     empresa = models.Empresa()
 
     t1 = time.perf_counter()
-    empleados = excel.group_data(raw)
+    try:
+        empleados = excel.group_data(raw)
+    except Exception:
+        logging.error(f"Error procesando el Excel subido ({archivo.filename}):\n{traceback.format_exc()}")
+        message = "El archivo no pudo ser procesado. Verificá los campos."
+        return render_template("error.html", message = message), 400
     del raw
     t_group = time.perf_counter()
 
