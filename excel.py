@@ -72,11 +72,27 @@ def load_data(path):
         wb = load_workbook(path, data_only=True, read_only=True)
         ws = wb.worksheets[0]
 
-        encabezados = [cell.value for cell in ws[5]]
+        #
+        encabezados = None
+        fila_encabezados = None
+
+        for numero_fila in range(1, 51):
+            fila = [cell.value for cell in ws[numero_fila]]
+
+            if 'nro_leg' in fila:
+                encabezados = fila
+                fila_encabezados = numero_fila
+                break
+
+        if encabezados is None:
+            raise ValueError("No se encontró la fila de encabezados.")
+
+        print(f"Encabezados encontrados en fila {fila_encabezados}")
+        #
 
         raw = []
 
-        for row in ws.iter_rows(min_row=6, values_only=True):
+        for row in ws.iter_rows(min_row=fila_encabezados + 1, values_only=True):
             fila = dict(zip(encabezados, row))
             raw.append(fila)
 
