@@ -31,7 +31,7 @@ class Empleado():
         self.convenio = datos["convenio"]
         self.sueldo_bruto_categoria = datos["sueldo_bruto_categoria"][0] if datos["sueldo_bruto_categoria"] else None
         self.valor_bruto_categoria = datos["valor_bruto_categoria"][0] if datos["valor_bruto_categoria"] else None
-        self.periodo = str(datos["periodo"]).strip()[:-8]
+        self.periodo = f'{str(datos["periodo"]).strip().split(' ')[0]} {str(datos["periodo"]).strip().split(' ')[1]}'
         self.pago = datos["pago"]
         self.fecha_pago_aportes = datos["fecha_pago_aportes"]
 
