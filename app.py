@@ -123,6 +123,7 @@ def upload_get():
 @app.post("/upload")
 def upload():
     print("upload: inicio", memoria())
+    limpiar_html_previo()
     archivo = request.files.get("archivo")
 
     if archivo is None:
@@ -223,6 +224,23 @@ def upload():
 @app.route("/output/<path:filename>")
 def output_files(filename):
     return send_from_directory(OUTPUT_DIR, filename)
+
+def limpiar_html_previo():
+    print("limpiar_html_previo: inicio ", memoria())
+    output_dir = Path("output").resolve()
+    archivos_html = sorted(output_dir.glob("*.html"))
+    if not archivos_html:
+        print("limpiar_html_previo: fin ", memoria())
+        return
+    else:
+        try:
+            for archivo_html in archivos_html:
+                archivo_html.unlink()
+            print("limpiar_html_previo: fin ", memoria())
+            return
+        except OSError as e:
+            logging.error(f"Error al limpiar recibos previos: ({e}):\n{traceback.format_exc()}")
+
 
 @app.get("/convert")
 def convert():
