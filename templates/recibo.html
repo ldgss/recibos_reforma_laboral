@@ -29,14 +29,13 @@
         .container{
             display: flex;
             margin: 1rem;
+            min-height: 196mm;
         }
 
-        .original{
+        .original, .duplicado{
             width: 50vw;
-        }
-
-        .duplicado{
-            width: 50vw;
+            display: flex;
+            flex-direction: column;
         }
 
         .empresa{
@@ -227,20 +226,23 @@
         }
 
         .firma{
-            margin-top: 50px;
+            margin-top: auto;    /* empuja la firma al pie de la página */
             margin-left: 1rem;
             margin-right: 1rem;
             margin-bottom: 1rem;
             display: flex;
-        }
-
-        .firma > div{
-            width: 50%;
-            text-align: center;
+            justify-content: end;
         }
 
         .firma > div:nth-child(2){
-            border-top: 1px solid black;
+            border: 1px dashed #999;
+            border-radius: 6px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0px 60px;
+            color: grey;
         }
 
         .monto_en_letras{
