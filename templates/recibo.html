@@ -13,6 +13,10 @@
             margin: 3mm;
         }
 
+        :root{
+            --main-header-color: #334d79;
+        }
+
         *{
             font-size: xx-small;
         }
@@ -95,7 +99,7 @@
 
         .table_recibo_header{
             column-span: all;
-            background-color: #095d9b;
+            background: var(--main-header-color);
             color: white;
             font-weight: bold;
             border: 1px solid black;
@@ -115,13 +119,13 @@
         }
 
         .table_subtotal{
-            background-color: rgb(244, 243, 243);
+            background-color: gainsboro;
             border-top: 1px solid black;
             font-weight: bold;
         }
 
         .table_neto{
-            background-color: rgb(211, 211, 211);
+            background-color: gainsboro;
             border-top: 1px solid black;
             font-weight: bold;
         }
@@ -132,7 +136,7 @@
         }
 
         .table_continua{
-            background-color: rgb(244, 243, 243);
+            background-color: gainsboro;
             font-style: italic;
             text-align: center;
         }
@@ -150,7 +154,7 @@
         }
 
         .footer_header{
-            background-color: #095d9b;
+            background: var(--main-header-color);
             color: white;
             font-weight: bold;
             border-bottom: 1px solid black;
