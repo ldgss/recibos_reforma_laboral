@@ -145,7 +145,8 @@
 
         .composicion{
             width: 70%;
-            border-collapse: collapse;
+            display: flex;
+            flex-direction: column;
         }
 
         .footer_header{
@@ -157,6 +158,7 @@
 
         .composiciones{
             display: flex;
+            flex: 1;
         }
 
         .composicion_izquierda div, .composicion_derecha div {
@@ -183,7 +185,27 @@
 
         .composicion_izquierda, .composicion_derecha{
             width: 100%;
-            border-right: 1px solid black;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .composicion_izquierda::after, .composicion_derecha::after{
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            width: 1px;
+            background: #000;
+            z-index: 1;
+        }
+
+        .composicion .composicion_izquierda > div, .composicion .composicion_derecha > div {
+            display: grid;
+            grid-template-columns: 1.5fr auto 1fr;
+            align-items: center;   /* antes: baseline */
+            flex: 1;               /* nuevo */
         }
 
         .composicion_izquierda div, .composicion_derecha div {
@@ -223,6 +245,10 @@
 
         .distribucion_grafico{
             max-width: 100%;
+        }
+
+        .comp_salarial{
+            border-right: 1px solid black;
         }
 
         
@@ -524,7 +550,7 @@
                 {% if mostrar_footer %}
                 <div class="footer">
                     <div class="composicion">
-                        <div class="footer_header">COMPOSICIÓN SALARIAL</div>
+                        <div class="footer_header comp_salarial">COMPOSICIÓN SALARIAL</div>
                         <div class="composiciones">
                             <div class="composicion_izquierda">
                                 <div class="composicion_total_titulo">
