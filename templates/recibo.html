@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href=" {{ url_for('static', filename='/css/recibos.css') }}">
+    <!-- <link rel="stylesheet" href=" {{ url_for('static', filename='/css/recibos.css') }}"> -->
     <script defer src="{{ url_for('static', filename='/js/recibos.js') }}"></script>
     <link rel="shortcut icon" href="{{ url_for('static', filename='/img/fav.png') }}" type="image/x-icon">
     <title>Recibos</title>
@@ -39,6 +39,7 @@
             border: 1px solid black;
             display: flex;
             margin: 1rem;
+            align-items: center;
         }
 
         #logo{
@@ -97,9 +98,10 @@
             background-color: #095d9b;
             color: white;
             font-weight: bold;
+            border: 1px solid black;
         }
 
-        .monto{
+        div.monto{
             display: flex;
             justify-content: space-between;
         }
@@ -138,11 +140,11 @@
         .footer{
             margin: 1rem;
             display: flex;
+            border: 1px solid black;
         }
 
         .composicion{
             width: 70%;
-            border: 1px solid black;
             border-collapse: collapse;
         }
 
@@ -150,6 +152,7 @@
             background-color: #095d9b;
             color: white;
             font-weight: bold;
+            border-bottom: 1px solid black;
         }
 
         .composiciones{
@@ -178,13 +181,9 @@
             text-align: right;
         }
 
-
-        .composicion_izquierda{
-            border-right: 1px solid black;
-        }
-
         .composicion_izquierda, .composicion_derecha{
             width: 100%;
+            border-right: 1px solid black;
         }
 
         .composicion_izquierda div, .composicion_derecha div {
@@ -194,15 +193,11 @@
 
         .composicion_total_titulo{
             background-color: gainsboro;
-            border-top: 1px solid black;
         }
 
         .distribucion {
             width: 30%;
-            border-top: 1px solid black;
-            border-bottom: 1px solid black;
             border-collapse: collapse;
-            border-right: 1px solid black;
         }
 
         .firma{
@@ -356,11 +351,13 @@
                             <td colspan="3">
                                 COSTO TOTAL DEL EMPLEADOR
                             </td>
-                            <td class="monto">
-                                <span>$</span>
-                                <span>
-                                    {{ recibo.costo_total_empleador | pesos }}
-                                </span>
+                            <td>
+                                <div class="monto">
+                                    <span>$</span>
+                                    <span>
+                                        {{ recibo.costo_total_empleador | pesos }}
+                                    </span>
+                                </div>
                             </td>
                         </tr>
                         <tr class="table_recibo_first">
@@ -380,9 +377,11 @@
                             <td>
                                 
                             </td>
-                            <td class="monto">
-                                <span>$</span>
-                                <span>{{ concepto.monto | pesos}}</span>
+                            <td>
+                                <div class="monto">
+                                    <span>$</span>
+                                    <span>{{ concepto.monto | pesos}}</span>
+                                </div>
                             </td>
                         </tr>
                         {% endfor%}
@@ -392,9 +391,11 @@
                             </td>
                             <td></td>
                             <td></td>
-                            <td class="monto">
-                                <span>$</span>
-                                <span>{{ recibo.costo.subtotal_costo_empleador | pesos }}</span> 
+                            <td>
+                                <div class="monto">
+                                    <span>$</span>
+                                    <span>{{ recibo.costo.subtotal_costo_empleador | pesos }}</span> 
+                                </div>
                             </td>
                         </tr>
                     </table>
@@ -407,12 +408,14 @@
                             <td colspan="4">
                                 SUELDO BRUTO EMPLEADO{% if not es_primera %} (continuación){% endif %}
                             </td>
-                            <td class="monto">
+                            <td>
                                 {% if es_primera %}
-                                <span>$</span>
-                                <span>
-                                    {{ recibo.sueldo.bruto | pesos }}
-                                </span>
+                                    <div class="monto">
+                                        <span>$</span>
+                                        <span>
+                                            {{ recibo.sueldo.bruto | pesos }}
+                                        </span>
+                                    </div>
                                 {% endif %}
                             </td>
                         </tr>
@@ -495,11 +498,13 @@
                             <td colspan="4">
                                 Neto a cobrar
                             </td>
-                            <td class="monto">
-                                <span>$</span>
-                                <span>
-                                    {{ recibo.sueldo.neto | pesos }}
-                                </span>
+                            <td>
+                                <div class="monto">
+                                    <span>$</span>
+                                    <span>
+                                        {{ recibo.sueldo.neto | pesos }}
+                                    </span>
+                                </div>
                             </td>
                         </tr>
                         {% else %}
