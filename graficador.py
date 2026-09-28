@@ -7,12 +7,12 @@ import base64
 def generar_grafico_composicion(comp):
     labels = ['Sindical', 'Seg. Social', 'Obra Social', 'INSSJP', 'ART', 'SCVO']
     colores = [
-        "#dc0918",  # Sindical
-        "#cc005a",  # Seg. Social
-        "#9e3082",  # Obra Social
-        "#62478c",  # INSSJP
-        "#334d79",  # ART
-        "#2f4858",  # SCVO
+        "#D99A32",  # Sindical
+        "#176B87",  # Seg. Social
+        "#27966B",  # Obra Social
+        "#38a9a5",  # INSSJP
+        "#8064b5",  # ART
+        "#d96b79",  # SCVO
     ]
     valores = [
         float(comp.composicion_total_sindical),

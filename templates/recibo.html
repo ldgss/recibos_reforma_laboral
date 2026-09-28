@@ -103,6 +103,10 @@
             font-weight: bold;
             border: 1px solid black;
         }
+        
+        .table_recibo_header td{
+            padding: 0.4rem;
+        }
 
         div.monto{
             display: flex;
@@ -225,6 +229,10 @@
             border-collapse: collapse;
         }
 
+        .distribucion .footer_header{
+            text-align: center;
+        }
+
         .firma{
             margin-top: auto;    /* empuja la firma al pie de la página */
             margin-left: 1rem;
@@ -255,6 +263,11 @@
 
         .comp_salarial{
             border-right: 1px solid black;
+            padding: 0.4rem;
+        }
+
+        .dist_costos{
+            padding: 0.4rem;
         }
 
         
@@ -655,7 +668,7 @@
                         </div>
                     </div>
                     <div class="distribucion">
-                        <div class="footer_header">DISTRIBUCIÓN DE COSTOS</div>
+                        <div class="footer_header dist_costos">DISTRIBUCIÓN DE COSTOS</div>
                         <img class="distribucion_grafico" src="data:image/png;base64,{{ recibo.distribucion }}" alt="Distribucion de costos">
                     </div>
                 </div>
