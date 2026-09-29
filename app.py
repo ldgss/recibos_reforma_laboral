@@ -49,7 +49,8 @@ def memoria():
         f"pico: {peak / 1024**2:.1f} MB"
     )
 
-FILAS_POR_HOJA = 30
+# 31 son las filas maximas de conceptos que aprovechan la hoja a4
+FILAS_POR_HOJA = 31
 FILAS_COSTO = 10
 FILAS_COMPOSICION = 10
 
